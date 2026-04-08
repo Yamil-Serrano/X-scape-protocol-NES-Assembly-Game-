@@ -2,10 +2,10 @@
 OUT = build/X-scape_protocol.nes
 
 # Sources
-SRC = src/main.asm src/reset.asm src/player.asm src/enemy.asm src/enemy2.asm src/coin.asm src/hud.asm
+SRC = src/main.asm src/reset.asm src/player.asm src/enemy.asm src/enemy2.asm src/collectables.asm src/hud.asm
 
 # Objects
-OBJ = build/main.o build/reset.o build/player.o build/enemy.o build/enemy2.o build/coin.o build/hud.o
+OBJ = build/main.o build/reset.o build/player.o build/enemy.o build/enemy2.o build/collectables.o build/hud.o
 
 # Default rule
 all: $(OUT)

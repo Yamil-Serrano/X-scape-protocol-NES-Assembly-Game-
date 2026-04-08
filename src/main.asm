@@ -19,7 +19,7 @@ mt_col:           .res 1
 mt_row:           .res 1
 ppu_lo:           .res 1  ; draw_map init, draw_* (sprite low row)
 ppu_hi:           .res 1
-temp:             .res 1  ; get_metatile (row calc), draw_enemy (y-1), draw_coin (y-1)
+temp:             .res 1  ; get_metatile (row calc), draw_enemy (y-1), draw_collectable (y-1)
 temp2:            .res 1  ; choose_new_direction (opposite direction)
 col_pixel:        .res 1  ; Edge X pixel, survives JSR
 row_pixel:        .res 1  ; Edge Y pixel, survives JSR
@@ -54,18 +54,20 @@ enemy2_move_timer: .res 1
 enemy2_anim_timer: .res 1
 enemy2_anim_dir:   .res 1
 
-; --- Coin variables ---
-coin_x:           .res 1
-coin_y:           .res 1
-coin_active:      .res 1
-coin_anim_timer:  .res 1
-coin_frame:       .res 1
-coin_dir:         .res 1
+; --- Collectable variables ---
+collectable_x:    .res 1
+collectable_y:    .res 1
+collectable_active: .res 1
+collectable_anim_timer: .res 1
+collectable_frame: .res 1
+collectable_dir:  .res 1
 respawn_x:        .res 1
 respawn_y:        .res 1
 respawn_count:    .res 1
 lfsr_seed:        .res 1
-coin_count:       .res 1   ; Coin counter (0-9, resets upon reaching 10)
+coin_count:       .res 1   ; Coins collected this cycle (0-9, resets at 10 → diamond)
+diamond_mode:     .res 1   ; 0=normal coin, 1=diamond spawned
+heart_mode:       .res 1   ; 0=normal, 1=heart spawned (score=999, win condition)
 
 ; --- Player score ---
 player_score:     .res 2
@@ -102,9 +104,9 @@ speed_bonus:      .res 1   ; 0..2, increases when collecting coins
 .exportzp enemy2_move_timer, enemy2_anim_timer, enemy2_anim_dir
 
 ; Coins
-.exportzp coin_x, coin_y, coin_active, coin_anim_timer, coin_frame, coin_dir
+.exportzp collectable_x, collectable_y, collectable_active, collectable_anim_timer, collectable_frame, collectable_dir
 .exportzp respawn_x, respawn_y, respawn_count, lfsr_seed, enemy_dir_options
-.exportzp coin_count
+.exportzp coin_count, diamond_mode, heart_mode
 
 ; Player score
 .exportzp player_score
@@ -163,7 +165,7 @@ speed_bonus:      .res 1   ; 0..2, increases when collecting coins
 .import update_player, draw_player, take_player_damage
 .import init_enemy, update_enemy, draw_enemy
 .import init_enemy2, update_enemy2, draw_enemy2
-.import init_coin, update_coin, draw_coin
+.import init_collectable, update_collectable, draw_collectable
 .import update_score_hud, draw_hud
 
 ; ============================================================
@@ -402,8 +404,14 @@ load_attributes:
   BNE load_attributes
 
   ; --- Initialize score ---
-  LDA #$00
+  LDA #$00 ;score starts at 0, so no need to initialize to 0
   STA player_score
+
+  ; Debug: Start with a high score to test hud
+  ;LDA #$E4        ; 996 decimal = $03E4 (low byte = $E4)
+  ;STA player_score
+  ;LDA #$03        ; High byte = $03
+
   STA player_score+1
 
   ; --- Initialize invincibility ---
@@ -446,12 +454,8 @@ load_attributes:
   JSR init_enemy
   JSR init_enemy2
 
-  ; --- Initialize coin ---
-  JSR init_coin
-
-  ; --- Initialize coin counter for every 10 coins increment speed bonus ---
-  LDA #$00
-  STA coin_count
+  ; --- Initialize collectable ---
+  JSR init_collectable
 
   ; --- Initialize hud score ---
   LDA #$00
@@ -503,9 +507,9 @@ MainLoop:
   ; --- Check collision with enemies ---
   JSR check_enemy_collision
 
-  ; --- Update and draw coin ---
-  JSR update_coin
-  JSR draw_coin
+  ; --- Update and draw collectable ---
+  JSR update_collectable
+  JSR draw_collectable
 
   ; --- Update and draw hud ---
   JSR update_score_hud
@@ -733,11 +737,12 @@ palettes:
   .byte $2D, $00, $10, $30  ; Bg Palette 0
   .byte $2D, $17, $27, $37  ; Bg Palette 1
   .byte $2D, $0F, $2D, $00  ; Bg Palette 2
-  .byte $2D, $0B, $1A, $29  ; Bg Palette 3
-  .byte $2D, $0F, $00, $10  ; Sp Palette 0
-  .byte $2D, $0C, $21, $32  ; Sp Palette 1
+  .byte $2D, $0A, $1B, $2A  ; Bg Palette 3
+  
+  .byte $2D, $0F, $05, $37  ; Sp Palette 0
+  .byte $2D, $1C, $2C, $3B  ; Sp Palette 1
   .byte $2D, $05, $16, $27  ; Sp Palette 2
-  .byte $2D, $0B, $1A, $29  ; Sp Palette 3
+  .byte $2D, $0A, $1B, $2A  ; Sp Palette 3
 
 metatiles:
   .byte $00, $00, $00, $00  ; 00 → free ground
