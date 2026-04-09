@@ -37,17 +37,17 @@
 ; Update enemy
 ; ============================================================
 .proc update_enemy
-
   INC enemy_move_timer
   LDA #$05
   SEC
   SBC speed_bonus
   CMP enemy_move_timer
-  BCS skip_movement
+  BEQ do_movement        ; BEQ instead of BCS
+  JMP skip_movement      ; explicit jump to skip movement (no need to check for BCC)
 
 do_movement:
   LDA #$00
-  STA enemy_move_timer
+  STA enemy_move_timer   ; reset timer
 
   ; Check alignment to grid
   LDA enemy_x

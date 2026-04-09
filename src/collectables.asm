@@ -387,7 +387,7 @@ key_frame1:
   ; fall through into draw_key_sprites
 
 draw_key_sprites:
-  LDA #%00000011     ; Palette 3
+  LDA #%00000000     ; Palette 0
   STA attr_base
 
   LDA collectable_y

@@ -739,7 +739,7 @@ palettes:
   .byte $2D, $0F, $2D, $00  ; Bg Palette 2
   .byte $2D, $0A, $1B, $2A  ; Bg Palette 3
   
-  .byte $2D, $0F, $05, $37  ; Sp Palette 0
+  .byte $2D, $0F, $06, $37  ; Sp Palette 0
   .byte $2D, $1C, $2C, $3B  ; Sp Palette 1
   .byte $2D, $05, $16, $27  ; Sp Palette 2
   .byte $2D, $0A, $1B, $2A  ; Sp Palette 3
