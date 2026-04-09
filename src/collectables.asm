@@ -28,6 +28,8 @@
 .importzp speed_bonus
 .importzp tile_base, attr_base, ppu_lo
 .importzp player_hp
+.importzp enemy_move_timer, enemy2_move_timer
+.importzp enemy_anim_timer, enemy2_anim_timer
 
 ; --- Import functions from main.asm ---
 .import get_metatile
@@ -260,6 +262,13 @@ no_overflow_diamond:
   CMP #$03
   BEQ after_collect
   INC speed_bonus
+
+  ; Reset timers to avoid freezing when changing threshold
+  LDA #$00
+  STA enemy_move_timer
+  STA enemy2_move_timer
+  STA enemy_anim_timer
+  STA enemy2_anim_timer
   JMP after_collect
 
 collect_key:

@@ -108,11 +108,14 @@ left_ok:
 skip_movement:
   ; Ping-pong animation
   INC enemy2_anim_timer
-  LDA enemy2_anim_timer
-  CMP #$0C
-  BNE skip_anim
+  LDA speed_bonus
+  TAX
+  LDA enemy2_anim_speed_table, X
+  CMP enemy2_anim_timer
+  BCS skip_anim
   LDA #$00
   STA enemy2_anim_timer
+
   LDA enemy2_anim_dir
   CMP #$00
   BNE anim_down
@@ -133,6 +136,9 @@ anim_down:
 skip_anim:
   RTS
 .endproc
+
+enemy2_anim_speed_table:
+  .byte $0C, $0A, $08, $06   ; bonus 0,1,2,3
 
 ; ============================================================
 ; Choose direction2 - 100% random movement

@@ -286,9 +286,11 @@ skip_movement:
   BEQ skip_anim
   
   INC anim_timer
-  LDA anim_timer
-  CMP #$0A
-  BNE skip_anim
+  LDX speed_bonus
+  LDA anim_speed_table, X ;Animation speed based on bonus (0-3)
+  CMP anim_timer
+  BCS skip_anim
+
   LDA #$00
   STA anim_timer
   LDA anim_dir
@@ -310,6 +312,9 @@ anim_going_down:
 skip_anim:
   RTS
 .endproc
+
+anim_speed_table:
+  .byte $0A, $08, $06, $04   ; bonus 0,1,2,3
 
 ; ============================================================
 ; Draw player
