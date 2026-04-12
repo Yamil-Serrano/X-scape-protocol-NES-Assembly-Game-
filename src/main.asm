@@ -7,80 +7,87 @@
 .segment "ZEROPAGE"
 
 ; --- Shared / System ---
-frame_ready:      .res 1
-tile_base:        .res 1  ; Shared by draw_player, draw_enemy, draw_enemy2
-attr_base:        .res 1  ; Shared by draw_player, draw_enemy, draw_enemy2
-pad1:             .res 1
+frame_ready:             .res 1
+tile_base:               .res 1  ; Shared by draw_player, draw_enemy, draw_enemy2
+attr_base:               .res 1  ; Shared by draw_player, draw_enemy, draw_enemy2
+pad1:                    .res 1
 
 ; --- Shared / Collision (shared by all) ---
-map_ptr:          .res 2  ; 16-bit pointer to map
-mt_byte:          .res 1
-mt_col:           .res 1
-mt_row:           .res 1
-ppu_lo:           .res 1  ; draw_map init, draw_* (sprite low row)
-ppu_hi:           .res 1
-temp:             .res 1  ; get_metatile (row calc), draw_enemy (y-1), draw_collectable (y-1)
-temp2:            .res 1  ; choose_new_direction (opposite direction)
-col_pixel:        .res 1  ; Edge X pixel, survives JSR
-row_pixel:        .res 1  ; Edge Y pixel, survives JSR
+map_ptr:                 .res 2  ; 16-bit pointer to map
+mt_byte:                 .res 1
+mt_col:                  .res 1
+mt_row:                  .res 1
+ppu_lo:                  .res 1  ; draw_map init, draw_* (sprite low row)
+ppu_hi:                  .res 1
+temp:                    .res 1  ; get_metatile (row calc), draw_enemy (y-1), draw_collectable (y-1)
+temp2:                   .res 1  ; choose_new_direction (opposite direction)
+col_pixel:               .res 1  ; Edge X pixel, survives JSR
+row_pixel:               .res 1  ; Edge Y pixel, survives JSR
 
 ; --- Player ---
-player_x:         .res 1  ; X position in pixels
-player_y:         .res 1  ; Y position in pixels
-player_direction: .res 1  ; 0=down 1=right 2=up 3=left
-player_sprite:    .res 1  ; Animation frame (0,1,2)
-anim_dir:         .res 1  ; Ping-pong: 0=rising 1=falling
-move_timer:       .res 1
-anim_timer:       .res 1
-player_hp:        .res 1
+player_x:                .res 1  ; X position in pixels
+player_y:                .res 1  ; Y position in pixels
+player_direction:        .res 1  ; 0=down 1=right 2=up 3=left
+player_sprite:           .res 1  ; Animation frame (0,1,2)
+anim_dir:                .res 1  ; Ping-pong: 0=rising 1=falling
+move_timer:              .res 1
+anim_timer:              .res 1
+player_hp:               .res 1
 player_invincible_timer: .res 1  ; Invincibility counter
 
 ; --- Enemy 1 ---
-enemy_x:          .res 1
-enemy_y:          .res 1
-enemy_direction:  .res 1  ; 0=down 1=right 2=up 3=left
-enemy_sprite:     .res 1  ; Animation frame
-enemy_move_timer: .res 1
-enemy_anim_timer: .res 1
-enemy_anim_dir:   .res 1
-enemy_dir_options:.res 1
+enemy_x:                 .res 1
+enemy_y:                 .res 1
+enemy_direction:         .res 1  ; 0=down 1=right 2=up 3=left
+enemy_sprite:            .res 1  ; Animation frame
+enemy_move_timer:        .res 1
+enemy_anim_timer:        .res 1
+enemy_anim_dir:          .res 1
+enemy_dir_options:       .res 1
 
 ; --- Enemy 2 ---
-enemy2_x:          .res 1
-enemy2_y:          .res 1
-enemy2_direction:  .res 1  ; 0=down 1=right 2=up 3=left
-enemy2_sprite:     .res 1  ; Animation frame
-enemy2_move_timer: .res 1
-enemy2_anim_timer: .res 1
-enemy2_anim_dir:   .res 1
+enemy2_x:                .res 1
+enemy2_y:                .res 1
+enemy2_direction:        .res 1  ; 0=down 1=right 2=up 3=left
+enemy2_sprite:           .res 1  ; Animation frame
+enemy2_move_timer:       .res 1
+enemy2_anim_timer:       .res 1
+enemy2_anim_dir:         .res 1
 
 ; --- Collectable variables ---
-collectable_x:    .res 1
-collectable_y:    .res 1
-collectable_active: .res 1
-collectable_anim_timer: .res 1
-collectable_frame: .res 1
-collectable_dir:  .res 1
-respawn_x:        .res 1
-respawn_y:        .res 1
-respawn_count:    .res 1
-lfsr_seed:        .res 1
-coin_count:       .res 1   ; Coins collected this cycle (0-9, resets at 10 → diamond)
-diamond_mode:     .res 1   ; 0=normal coin, 1=diamond spawned
-heart_mode:       .res 1   ; 0=normal, 1=heart spawned (score=999, win condition)
+collectable_x:           .res 1
+collectable_y:           .res 1
+collectable_active:      .res 1
+collectable_anim_timer:  .res 1
+collectable_frame:       .res 1
+collectable_dir:         .res 1
+respawn_x:               .res 1
+respawn_y:               .res 1
+respawn_count:           .res 1
+lfsr_seed:               .res 1
+coin_count:              .res 1  ; Coins collected this cycle (0-9, resets at 10 → diamond)
+diamond_mode:            .res 1  ; 0=normal coin, 1=diamond spawned
+key_mode:                .res 1  ; 0=normal, 1=key spawned (score=999, win condition)
 
 ; --- Player score ---
-player_score:     .res 2
+player_score:            .res 2
 
 ; --- Hud score sprites ---
-hud_score_hundreds: .res 1
-hud_score_tens:     .res 1
-hud_score_units:    .res 1
-temp_y:           .res 1
-gameover_blink_timer: .res 1
+hud_score_hundreds:      .res 1
+hud_score_tens:          .res 1
+hud_score_units:         .res 1
+temp_y:                  .res 1
+gameover_blink_timer:    .res 1
+
+; --- Pause ---
+paused:                  .res 1
+start_prev:              .res 1
+
+; --- Win condition ---
+game_won:                .res 1  ; 0=playing, 1=player collected the key
 
 ; --- Speed progression ---
-speed_bonus:      .res 1   ; 0..2, increases when collecting coins
+speed_bonus:             .res 1  ; 0..2, increases when collecting coins
 
 ; --- Exports ---
 ; Shared
@@ -103,16 +110,22 @@ speed_bonus:      .res 1   ; 0..2, increases when collecting coins
 .exportzp enemy2_x, enemy2_y, enemy2_direction, enemy2_sprite
 .exportzp enemy2_move_timer, enemy2_anim_timer, enemy2_anim_dir
 
-; Coins
+; Collectables
 .exportzp collectable_x, collectable_y, collectable_active, collectable_anim_timer, collectable_frame, collectable_dir
-.exportzp respawn_x, respawn_y, respawn_count, lfsr_seed, enemy_dir_options
-.exportzp coin_count, diamond_mode, heart_mode
+.exportzp respawn_x, respawn_y, respawn_count, lfsr_seed
+.exportzp coin_count, diamond_mode, key_mode
 
 ; Player score
 .exportzp player_score
 
 ; Hud
 .exportzp hud_score_hundreds, hud_score_tens, hud_score_units, gameover_blink_timer
+
+; Pause
+.exportzp paused
+
+; Win
+.exportzp game_won
 
 ; Speed bonus
 .exportzp speed_bonus
@@ -404,28 +417,22 @@ load_attributes:
   BNE load_attributes
 
   ; --- Initialize score ---
-  LDA #$00 ;score starts at 0, so no need to initialize to 0
+  LDA #$00
   STA player_score
+  STA player_score+1
 
-  ; Debug: Start with a high score to test hud
+  ; --- Initialize score for debug only ---
   ;LDA #$E4        ; 996 decimal = $03E4 (low byte = $E4)
   ;STA player_score
   ;LDA #$03        ; High byte = $03
-
-  STA player_score+1
+  ;STA player_score+1
 
   ; --- Initialize invincibility ---
-  LDA #$00
   STA player_invincible_timer
 
-  ; ============================================================
-  ; Initialize positions of all entities
-  ; ============================================================
-  
   ; --- Player position at cell (7,7) ---
   LDA #$70          ; 7 * 16 = 112 = $70
   STA player_x
-  LDA #$70         
   STA player_y
 
   ; --- Enemy 1 position (pursuer) ---
@@ -437,7 +444,6 @@ load_attributes:
   ; --- Enemy 2 position (random) ---
   LDA #$10          ; Cell (1,1) in pixels
   STA enemy2_x
-  LDA #$10
   STA enemy2_y
 
   ; --- Initialize additional player variables ---
@@ -462,18 +468,18 @@ load_attributes:
   STA hud_score_hundreds
   STA hud_score_tens
   STA hud_score_units
-
-  ; --- Initialize game over blink timer ---
-  LDA #$00
   STA gameover_blink_timer
 
   ; --- Initialize Hp (3 lives at start) ---
   LDA #$03
   STA player_hp
 
-  ; --- Initialize speed bonus ---
+  ; --- Initialize speed bonus, pause and win ---
   LDA #$00
   STA speed_bonus
+  STA paused
+  STA start_prev
+  STA game_won
 
   ; --- Turn on screen ---
   LDA PPUSTATUS
@@ -491,8 +497,13 @@ MainLoop:
   LDA #$00
   STA frame_ready
 
-  ; --- Update and draw player ---
   JSR read_controller
+
+  ; --- Check pause ---
+  LDA paused
+  BNE MainLoop          ; if paused, skip everything and wait for the next frame
+
+  ; --- Update and draw player ---
   JSR update_player
   JSR draw_player
 
@@ -517,6 +528,10 @@ MainLoop:
 
   JMP MainLoop
 
+@won_loop:
+  JSR draw_hud          ; draw_hud handles the you escaped screen when game_won=1
+  JMP MainLoop
+
 .endproc
 
 ; ============================================================
@@ -533,7 +548,20 @@ MainLoop:
   LDA $4016         ; A      — discard
   LDA $4016         ; B      — discard
   LDA $4016         ; Select — discard
-  LDA $4016         ; Start  — discard
+
+  LDA $4016         ; Start
+  AND #$01
+  TAX               ; store current Start state in X
+  CMP start_prev    ; did it change since last frame?
+  BEQ skip_start    ; no change → no toggle
+  STX start_prev
+  CPX #$01          ; is Start currently pressed?
+  BNE skip_start
+  ; only toggle pause on the rising edge
+  LDA paused
+  EOR #$01
+  STA paused
+skip_start:
 
   LDA $4016         ; Up
   AND #$01
@@ -651,14 +679,18 @@ passable:
 ; Hitbox reduced to 12x12 to avoid corner touches
 ; ============================================================
 .proc check_enemy_collision
+  ; If game won, don't check
+  LDA game_won
+  BNE no_collision
+  
   ; If player is already dead, don't check
   LDA player_hp
   BEQ no_collision
-  
+
   ; ==========================================
   ; Collision with enemy 1
   ; ==========================================
-  
+
   ; Calculate distance in X with enemy1
   LDA player_x
   SEC
@@ -670,7 +702,7 @@ passable:
 x_diff1:
   CMP #$0C        ; 12 pixel threshold (reduced hitbox)
   BCS check_enemy2
-  
+
   ; Calculate distance in Y with enemy1
   LDA player_y
   SEC
@@ -682,7 +714,7 @@ x_diff1:
 y_diff1:
   CMP #$0C        ; 12 pixel threshold (reduced hitbox)
   BCS check_enemy2
-  
+
   ; Collision with enemy1
   JSR take_player_damage
   RTS
@@ -702,7 +734,7 @@ check_enemy2:
 x_diff2:
   CMP #$0C        ; 12 pixel threshold (reduced hitbox)
   BCS no_collision
-  
+
   ; Calculate distance in Y with enemy2
   LDA player_y
   SEC
@@ -714,7 +746,7 @@ x_diff2:
 y_diff2:
   CMP #$0C        ; 12 pixel threshold (reduced hitbox)
   BCS no_collision
-  
+
   ; Collision with enemy2
   JSR take_player_damage
 
@@ -738,7 +770,7 @@ palettes:
   .byte $2D, $17, $27, $37  ; Bg Palette 1
   .byte $2D, $0F, $2D, $00  ; Bg Palette 2
   .byte $2D, $0A, $1B, $2A  ; Bg Palette 3
-  
+
   .byte $2D, $0F, $06, $37  ; Sp Palette 0
   .byte $2D, $1C, $2C, $3B  ; Sp Palette 1
   .byte $2D, $05, $16, $27  ; Sp Palette 2

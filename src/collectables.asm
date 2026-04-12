@@ -7,8 +7,7 @@
 ;   - Each diamond gives +7 points + speed up
 ;   - 27 full cycles (10 coins + 1 diamond) = 999 points exactly
 ;   - At score 999 → next spawn is the key (player wins)
-;   - Collecting the key triggers game won in a future PR,
-;   but for now it just stays visible and stops spawning new coins
+;   - Collecting the key sets game_won=1 and hides everything
 ;
 ; Math check: (10 × 3) + 7 = 37 pts/cycle × 27 cycles = 999 ✓
 ; ============================================================
@@ -23,13 +22,14 @@
 .importzp collectable_x, collectable_y, collectable_active
 .importzp collectable_anim_timer, collectable_frame, collectable_dir
 .importzp respawn_x, respawn_y, respawn_count, lfsr_seed
-.importzp coin_count, diamond_mode, heart_mode
+.importzp coin_count, diamond_mode, key_mode
 .importzp mt_col, mt_row, temp
 .importzp speed_bonus
 .importzp tile_base, attr_base, ppu_lo
 .importzp player_hp
 .importzp enemy_move_timer, enemy2_move_timer
 .importzp enemy_anim_timer, enemy2_anim_timer
+.importzp game_won
 
 ; --- Import functions from main.asm ---
 .import get_metatile
@@ -49,7 +49,7 @@
   STA collectable_dir
   STA coin_count      ; Coins collected this cycle (0-9)
   STA diamond_mode    ; 0=normal coin, 1=diamond next
-  STA heart_mode      ; 0=normal, 1=key next (win condition)
+  STA key_mode      ; 0=normal, 1=key next (win condition)
 
   JSR respawn_coin
   RTS
@@ -63,7 +63,7 @@
 .proc decide_next_spawn
   LDA #$00
   STA diamond_mode
-  STA heart_mode
+  STA key_mode
 
   ; --- Check win condition: score == 999 ($03E7) ---
   LDA player_score+1
@@ -73,7 +73,7 @@
   CMP #$E7
   BNE check_diamond
   LDA #$01
-  STA heart_mode
+  STA key_mode
   RTS
 
 check_diamond:
@@ -237,8 +237,8 @@ y_diff:
   BCS update_animation
 
 collect_item:
-  ; Key = win — stop spawning, let main loop detect heart_mode=1
-  LDA heart_mode
+  ; Key = win
+  LDA key_mode
   CMP #$01
   BEQ collect_key
 
@@ -272,8 +272,11 @@ no_overflow_diamond:
   JMP after_collect
 
 collect_key:
-  ; Game won — key stays visible, main loop checks heart_mode
-  ; Do NOT call respawn or decide_next_spawn here
+  ; Player collected the key — trigger win condition
+  LDA #$00
+  STA collectable_active  ; hide the key
+  LDA #$01
+  STA game_won            ; signal win to main loop and hud
   RTS
 
 collect_coin:
@@ -355,7 +358,7 @@ skip_anim:
   RTS
 
 draw_it:
-  LDA heart_mode
+  LDA key_mode
   CMP #$01
   BNE not_key
   JMP draw_key

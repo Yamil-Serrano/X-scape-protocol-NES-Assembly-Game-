@@ -12,6 +12,7 @@
 .importzp pad1, tile_base, attr_base, ppu_lo, temp, temp2
 .importzp col_pixel, row_pixel, mt_col, mt_row
 .importzp speed_bonus
+.importzp game_won
 
 ; --- Import functions from main.asm ---
 .import get_metatile, is_solid
@@ -39,7 +40,11 @@ already_dead:
 ; Update player
 ; ============================================================
 .proc update_player
-
+  ; If game won, stop player
+  LDA game_won
+  BEQ :+
+  RTS
+:
   LDA player_invincible_timer
   BEQ invincible_done
   DEC player_invincible_timer
@@ -320,10 +325,19 @@ anim_speed_table:
 ; Draw player
 ; ============================================================
 .proc draw_player
+  ; If game won, hide player
+  LDA game_won
+  BEQ :+
+  LDA #$FF
+  STA $0200
+  STA $0204
+  STA $0208
+  STA $020C
+  RTS
+:
   ; If player is dead, hide
   LDA player_hp
   BNE player_alive
-  
   LDA #$FF
   STA $0200
   STA $0204

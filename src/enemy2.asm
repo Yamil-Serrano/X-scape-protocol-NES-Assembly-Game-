@@ -10,7 +10,7 @@
 ; --- Import zero page variables from main.asm ---
 .importzp enemy2_x, enemy2_y, enemy2_direction, enemy2_sprite
 .importzp enemy2_move_timer, enemy2_anim_timer, enemy2_anim_dir
-.importzp enemy_dir_options, player_x, player_y
+.importzp enemy_dir_options
 .importzp col_pixel, row_pixel, mt_col, mt_row, temp, temp2
 .importzp lfsr_seed, speed_bonus
 .importzp tile_base, attr_base, ppu_lo
