@@ -211,8 +211,14 @@ This technique avoids exceeding sprite limits while reusing the same sprite OAM 
 
 ## License
 
-This project is licensed under the **MIT License**.
-See the [LICENSE](LICENSE) file for details.
+This project uses **dual licensing**:
+
+| Component | License |
+|-----------|---------|
+| Source code (all `.asm` files) | [MIT License](LICENSE) |
+| Story, lore, characters, art assets | [CC BY-SA 4.0](LICENSE-CC) |
+
+**Important:** The MIT License in the `LICENSE` file applies **only to the 6502 Assembly source code**. The story of Nibsy, character names (Dr. Morrow, Agent, etc.), all narrative text, and art assets are covered exclusively by the CC BY-SA 4.0 license.
 
 ## Contact
 
